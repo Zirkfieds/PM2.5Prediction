@@ -1,7 +1,10 @@
 from sklearn.svm import SVR
-from sklearn.metrics import mean_squared_error
+from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.model_selection import KFold
 
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 def predict_svm(p_train, r_train, C_, gamma_, epsilon_, output):
 
@@ -28,9 +31,20 @@ def predict_svm(p_train, r_train, C_, gamma_, epsilon_, output):
         r_predict_train = clf.predict(P_train)
         r_predict_test = clf.predict(P_test)
 
+        mse = mean_squared_error(r_predict_train, R_train, squared=False)
+        r2 = r2_score(r_predict_train, R_train)
+
         if output is True:
             print(f'{R_test[:100:20]} | {R_train[:100:20]}')
             print(f'{r_predict_test[:100:20]} | {r_predict_train[:100:20]}')
+            print(f'{mse}, {r2}')
+            df = pd.DataFrame({'actual': R_train, 'predicted': r_predict_train})
+            sns.set_style('whitegrid')
+            sns.lineplot(data=df, palette='husl')
+            plt.title('Actual vs. Predicted PM2.5 Concentration')
+            plt.xlabel('Time (hours)')
+            plt.ylabel('PM2.5 Concentration')
+            plt.show()
             print()
 
         train_err = mean_squared_error(R_train, r_predict_train)

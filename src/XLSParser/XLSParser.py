@@ -9,11 +9,10 @@ TEMP_DATA_FILE = 'tmpxls'
 LONGITUDE = 110.335117
 LATITUDE = 19.995355
 
-CUTOFF = 3056  # total entries of valid data for PM10
+CUTOFF = 1000  # total entries of valid data for PM10
 
 drop_table = ['MN', 'NO2', 'WindDir', 'WindSpd', 'PM10', 'CO', 'Humidity', 'AirPressure', 'Temperature', 'SO2', 'O3']
 kept_table = ['Hours', 'PM2.5']
-
 
 class XLSParser(object):
 
@@ -24,15 +23,14 @@ class XLSParser(object):
 
     def preprocess(self, columns_list=None):
 
-        # self.df = self.df[:CUTOFF]
+        self.df = self.df[:CUTOFF]
 
         if columns_list is None:
             columns_list = drop_table
         for cols in columns_list:
             self.df = self.df.drop([cols], axis=1)
 
-        # create lags
-        lag = 6
+        lag = 6  # create lags at the length of 6
         for i in range(1, lag + 1):
             self.df[f'PM2.5_{i}'] = self.raw_df['PM2.5'].shift(i)
         self.df['PM2.5_predict'] = self.df['PM2.5'].shift(-1)

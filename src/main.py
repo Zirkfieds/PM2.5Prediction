@@ -12,8 +12,11 @@ if __name__ == '__main__':
     p_train, p_test, r_train, r_test = splitter(processed_data, 0.1)
     p_train, p_test, r_train, r_test = shuffler(p_train, p_test, r_train, r_test)
 
-    c_range = np.logspace(-1, 1, 3)
-    g_range = np.logspace(-2, 0, 5)
+    # c_range = np.logspace(-1, 1, 3)
+    # g_range = np.logspace(-2, 0, 5)
+
+    c_range = [12.0]
+    g_range = [0.075]
 
     errs = []
     par_c = []
@@ -47,4 +50,4 @@ if __name__ == '__main__':
     opt_c = par_c[index]
     opt_g = par_g[index]
 
-    _, __ = predict_svm(p_train, r_train, opt_c, opt_g, 0.01, output=True)
+    _, __, = predict_svm(p_train, r_train, opt_c, opt_g, 0.01, output=True)
