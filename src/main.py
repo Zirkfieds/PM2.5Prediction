@@ -1,53 +1,36 @@
-import XLSParser.XLSParser as xp
-from MachineLearning.preprocess import splitter, shuffler
-from MachineLearning.linear_models import predict_svm
-
-import numpy as np
+from src.MachineLearning.model_test import model_test
+from src.MachineLearning.model_train import model_train
 
 if __name__ == '__main__':
     print('PM 2.5 Prediction')
-    xpr = xp.XLSParser()
-    processed_data = xpr.preprocess()
 
-    p_train, p_test, r_train, r_test = splitter(processed_data, 0.1)
-    p_train, p_test, r_train, r_test = shuffler(p_train, p_test, r_train, r_test)
+    step = 1
 
-    # c_range = np.logspace(-1, 1, 3)
-    # g_range = np.logspace(-2, 0, 5)
+    model = model_train('../dataset/data.xls', 1)
+    clf = model.train_model()
+    model.self_evaluation()
 
-    c_range = [12.0]
-    g_range = [0.075]
+    # load the data from 4 random test points
+    for i in range(0, 5):
+        test = model_test('../dataset/data_pred_' + str(i) + '.xls', 6)
+        test.test_model(clf)
 
-    errs = []
-    par_c = []
-    par_g = []
-
-    i = 0
-    j = 0
-
-    mse_mesh = np.zeros(shape=(len(c_range), len(g_range)))
-    te_mesh = np.zeros(shape=(len(c_range), len(g_range)))
-
-    for c in c_range:
-        for g in g_range:
-            mse, te = predict_svm(p_train, r_train, c, g, 0.01, output=False)
-            print(c, g, mse, te)
-            mse_mesh[i][j] = mse
-            te_mesh[i][j] = te
-            errs.append(mse)
-            par_c.append(c)
-            par_g.append(g)
-            j += 1
-        j = 0
-        i += 1
-
-    min_err = errs[0]
-    index = -1
-    for k in range(len(errs)):
-        if errs[k] < min_err:
-            min_err = errs[k]
-            index = k
-    opt_c = par_c[index]
-    opt_g = par_g[index]
-
-    _, __, = predict_svm(p_train, r_train, opt_c, opt_g, 0.01, output=True)
+    # single prediction test for any step X
+    test = model_test('../dataset/data_pred_0.xls', 6)
+    test.single_test(clf, 6,
+                     [[
+                         19.3,
+                         19.1,
+                         19.0,
+                         20.1,
+                         19.2,
+                         18.6
+                     ]])
+    '''
+    19.3550761851852,
+    19.1471226666667,
+    19.4044148113208,
+    19.5288545925926,
+    19.2584365,
+    18.6199421296296
+    '''

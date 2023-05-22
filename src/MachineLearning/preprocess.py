@@ -4,8 +4,10 @@ import numpy as np
 
 
 def splitter(data, test_ratio):
-    pred = data[:, :-1]
+    pred = data[:, :-2]
+    print(f'{pred.shape} + {pred[0]}')
     resp = data[:, -1:]
+    print(f'{resp.shape} + {resp[0]}')
     p_train, p_test, r_train, r_test = train_test_split(pred, resp, test_size=test_ratio, shuffle=False)
     return p_train, p_test, r_train, r_test
 

@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 import numpy as np
+from src.Preprocessing.data_preparation import data_processor
 
 DATASET_PREFIX = '../dataset/'
 DATA_FILE = 'data.xls'
@@ -21,7 +22,11 @@ class XLSParser(object):
         self.df = self.raw_df.copy()
         self.df_shape = self.df.shape
 
-    def preprocess(self, columns_list=None):
+        dp = data_processor(self.df)
+        # dp.clean()
+        self.df = dp.get_data()
+
+    def preprocess(self, step=1, columns_list=None):
 
         self.df = self.df[:CUTOFF]
 
@@ -32,7 +37,10 @@ class XLSParser(object):
 
         lag = 6  # create lags at the length of 6
         for i in range(1, lag + 1):
-            self.df[f'PM2.5_{i}'] = self.raw_df['PM2.5'].shift(i)
+            if i == lag:
+                self.df[f'PM2.5_{i}'] = self.raw_df['PM2.5'].shift(i + step - 1)
+            else:
+                self.df[f'PM2.5_{i}'] = self.raw_df['PM2.5'].shift(i)
         self.df['PM2.5_predict'] = self.df['PM2.5'].shift(-1)
 
         self.df = self.df.dropna(how='any')
