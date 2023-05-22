@@ -12,17 +12,18 @@ def splitter(data, test_ratio):
     return p_train, p_test, r_train, r_test
 
 
-def shuffler(p_train, p_test, r_train, r_test):
+def shuffler(p_train, p_test, r_train, r_test, only_ravel=False):
 
-    indexes = [i for i in range(len(p_train))]
+    if not only_ravel:
+        indexes = [i for i in range(len(p_train))]
 
-    rd.shuffle(indexes)
-    p_train = p_train[indexes]
-    r_train = r_train[indexes]
-    ind_list = [i for i in range(len(p_test))]
-    rd.shuffle(indexes)
-    p_test = p_test[ind_list]
-    r_test = r_test[ind_list]
+        rd.shuffle(indexes)
+        p_train = p_train[indexes]
+        r_train = r_train[indexes]
+        ind_list = [i for i in range(len(p_test))]
+        rd.shuffle(indexes)
+        p_test = p_test[ind_list]
+        r_test = r_test[ind_list]
 
     r_train = np.ravel(r_train)
     r_test = np.ravel(r_test)

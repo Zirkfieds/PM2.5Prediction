@@ -29,7 +29,7 @@ class model_train(object):
         # e_range = [0.01, 0.1, 0.5, 1, 5]
 
         c_range = [50]
-        g_range = [0.2]
+        g_range = [0.025]
         e_range = [0.01]
 
         errs = []

@@ -20,7 +20,7 @@ class model_test(object):
         xpr = XLSParser(self.xpath)
         test_processed_data = xpr.preprocess(step=step)
 
-        tp_train, tp_test, tr_train, tr_test = splitter(test_processed_data, 0.1)
+        tp_train, tp_test, tr_train, tr_test = splitter(test_processed_data, 0.3)
         tp_train, tp_test, tr_train, tr_test = shuffler(tp_train, tp_test, tr_train, tr_test)
 
         clf.fit(tp_train, tr_train)
@@ -33,19 +33,19 @@ class model_test(object):
         xpr = XLSParser(self.xpath)
         test_processed_data = xpr.preprocess(step=self.step)
 
-        tp_train, tp_test, tr_train, tr_test = splitter(test_processed_data, 0.1)
+        tp_train, tp_test, tr_train, tr_test = splitter(test_processed_data, 0.3)
         tp_train, tp_test, tr_train, tr_test = shuffler(tp_train, tp_test, tr_train, tr_test)
 
         clf.fit(tp_train, tr_train)
 
-        tr_predict_train = clf.predict(tp_train)
+        prediction = clf.predict(tp_test)
 
-        mse = mean_squared_error(tr_predict_train, tr_train, squared=False)
-        r2 = r2_score(tr_predict_train, tr_train)
+        mse = mean_squared_error(prediction, tr_test, squared=False)
+        r2 = r2_score(prediction, tr_test)
 
         # visualization + metrics
         print(f'prediction metrics: {mse}, {r2}')
-        df = pd.DataFrame({'actual': tr_train[::5], 'predicted': tr_predict_train[::5]})
+        df = pd.DataFrame({'actual': tr_test[:], 'predicted': prediction[:]})
         sns.set_style('whitegrid')
         sns.lineplot(data=df, palette='husl')
         plt.title('Actual vs. Predicted PM2.5 Concentration')
